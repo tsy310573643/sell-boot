@@ -37,7 +37,6 @@ public class ProductInfoServiceImpl implements ProductInfoService {
         return productInfoRepository.findOne(productInfoId);
     }
 
-    @Override
     public ProductInfo save(ProductInfo productInfo) {
         return productInfoRepository.save(productInfo);
     }
@@ -60,6 +59,24 @@ public class ProductInfoServiceImpl implements ProductInfoService {
             }
             //扣库存
             productInfo.setProductStock(productInfo.getProductStock() - cartDTO.getProductQuantity());
+            productInfoRepository.save(productInfo);
+        }
+    }
+
+    @Override
+    public void increaseStock(List<CartDTO> cartDTOList) {
+        for (CartDTO cartDTO : cartDTOList) {
+            ProductInfo productInfo = productInfoRepository.findOne(cartDTO.getProductId());
+            if (productInfo == null) {
+                //当商品不存在时抛出异常
+                throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+            }
+            if (cartDTO.getProductQuantity() <= 0) {
+                //当商品数量不合法时抛出异常
+                throw new SellException(ResultEnum.QUANTITY_NOT_LEGAL);
+            }
+            //加库存
+            productInfo.setProductStock(productInfo.getProductStock() + cartDTO.getProductQuantity());
             productInfoRepository.save(productInfo);
         }
     }

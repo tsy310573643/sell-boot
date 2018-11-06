@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum  PayStatusEnum {
+
     NOT_PAY(0,"未支付"),
     PAID(1,"已支付");
 
